@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
 typedef struct dir{
     // O atributo nome deve conter o nome completo do diretório ou arquivo (ex: Raiz/Teste/Pasta/arq.txt).
@@ -19,7 +20,7 @@ void nomeDiretorio(Dir *d);
 // atual. Não deve ser exibido todos os diretórios abaixo do atual (netos, etc, 
 // apenas os imediatamente abaixo (filhos). Caso o diretório atual esteja vazio, o 
 // programa deve exibir uma mensagem informando o fato.
-void listarDiretorio();
+void listarDiretorio(Dir *d);
 
 // deve abrir um subdiretório pertencente ao diretório atual a 
 // partir do nome informado pelo usuário. Caso o subdiretório com o nome 
@@ -60,6 +61,34 @@ void excluirArquivo();
 // antes de ser encerrado.
 void liberarDiretorio();
 
-Dir* nomeDiretorio(Dir *d){
-    return d.nome;
+void nomeDiretorio(Dir *d){
+    if (d != NULL) {
+        printf("\nDiretorio atual: %s\n", d->nome);
+    }
+}
+
+void listarDiretorio(Dir *d){
+    // listar então os filhos do diretorio d
+    // se existir
+    //         A  -> listarDiretorio();
+    //   B            C
+    // Saída vai ser: B C
+    // precisa percorrer todos os nós de d mostrando o nomeDiretorio(); de cada um, retornando os valores obtidos
+
+    Dir* aux;
+
+    // se estiver vazio
+    if (d->pFilho == NULL){
+        printf("\nDIRETORIO VAZIO.\n");
+        return;
+    }
+
+    for (aux = d->pFilho; aux != NULL; aux->prox){
+        printf("%s\n", aux->nome);
+    }
+}
+
+void abrirDiretorio(Dir *d, char nome){
+    // vou entrar no diretorio que tem o mesmo nome buscado
+    
 }
