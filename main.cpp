@@ -11,6 +11,8 @@ int main(){
     Dir *diretorioAtual = raiz;
 
     int opcao = 0;
+    char nomeDigitado[100];
+
     do {
         printf("1. Nome Diretorio\n");
         printf("2. Listar Diretorio\n");
@@ -30,9 +32,13 @@ int main(){
             nomeDiretorio(diretorioAtual);
             break;
         case 2:
-        listarDiretorio(diretorioAtual);
+            listarDiretorio(diretorioAtual);
             break;
         case 3:
+            printf("Digite o nome do diretorio que deseja abrir: ");
+            scanf("%99s", nomeDigitado);
+
+            diretorioAtual = abrirDiretorio(diretorioAtual, nomeDigitado);
             break;
         case 4:
             break;

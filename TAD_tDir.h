@@ -88,7 +88,40 @@ void listarDiretorio(Dir *d){
     }
 }
 
-void abrirDiretorio(Dir *d, char nome){
+Dir* abrirDiretorio(Dir *d, char *nome){
+
+    Dir* aux;
     // vou entrar no diretorio que tem o mesmo nome buscado
-    
+    if (d->pFilho == NULL){
+        printf("\nDIRETORIO VAZIO. Nao foi possivel abrir '%s'.\n", nome);
+        return d;
+    }
+
+    for (aux = d->pFilho; aux != NULL; aux = aux->prox){
+        // entrei no nó, é igual o que estou procurando?
+        if (strcmp(aux->nome, nome) == 0){
+            // é um diretorio?
+            if (aux->tam == 0){
+                printf("Abrindo diretorio: %s\n", aux->nome);
+                return aux;
+            } else {
+                printf("'%s' eh um arquivo, nao um diretorio.\n", nome);
+                return d;
+            }
+        }
+    }
+
+    // caso não encotre nada em lugar nenhum do diretorio
+    printf("'%s' nao encontrado", nome);
+    return d;  // volta pro inicio (ou seja, sem mudanças)
 }
+
+// Dir* criarDiretorio(){
+//     printf("Digite ")
+//     Dir *diretorio = (Dir*) malloc(sizeof(Dir));
+//     strcpy(diretorio->nome, c);
+//     diretorio->tam = 0;
+//     diretorio->pFilho = NULL;
+//     diretorio->prox = NULL;
+//     return diretorio;
+// }
