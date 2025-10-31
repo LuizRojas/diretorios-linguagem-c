@@ -116,6 +116,44 @@ Dir* abrirDiretorio(Dir *d, char *nome){
     return d;  // volta pro inicio (ou seja, sem mudanças)
 }
 
+Dir* encontrarPai(Dir* noBusca, Dir* alvo) {
+    if (noBusca == NULL || noBusca->pFilho == NULL) {
+        return NULL;
+    }
+
+    Dir* aux;
+    for (aux = noBusca->pFilho; aux != NULL; aux = aux->prox) {
+        if (aux == alvo) {
+            return noBusca;
+        }
+    }
+
+    for (aux = noBusca->pFilho; aux != NULL; aux = aux->prox) {
+        Dir* paiEncontrado = encontrarPai(aux, alvo);
+        if (paiEncontrado != NULL) {
+            return paiEncontrado;
+        }
+    }
+    return NULL;
+}
+
+Dir* voltarDiretorio(Dir *raiz, Dir *atual){
+    if (atual == raiz) {
+        printf("Ja esta no diretorio raiz.\n");
+    }
+
+    Dir* pai = encontrarPai(raiz, atual);
+
+    if (pai != NULL){
+        printf("Retornando para: %s\n", pai->nome);
+        return pai;
+    } else {
+        printf("Foi comprar cigarro. Mantendo em %s\n", atual->nome);
+        return atual;
+    }
+
+}
+
 // Dir* criarDiretorio(){
 //     printf("Digite ")
 //     Dir *diretorio = (Dir*) malloc(sizeof(Dir));
