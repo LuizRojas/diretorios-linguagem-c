@@ -26,7 +26,7 @@ void listarDiretorio(Dir *d);
 // partir do nome informado pelo usuário. Caso o subdiretório com o nome 
 // informado não exista, o programa deve exibir uma mensagem informando o 
 // fato.
-void abrirDiretorio();
+Dir* abrirDiretorio(Dir *d, char *nome);
 
 // deve retornar ao diretório pai do diretório atual. Caso o 
 // diretório atual seja a Raiz, o programa deve permanecer na Raiz. 
@@ -56,6 +56,9 @@ void criarArquivo();
 // teclado. Caso o arquivo a ser excluído não exista no diretório atual, o programa 
 // deve exibir uma mensagem informando o fato.
 void excluirArquivo();
+
+Dir* encontrarPai(Dir* noBusca, Dir* alvo);
+int tamanhoRecursivo(Dir *d);
 
 // deve liberar a memória da estrutura de diretório completa 
 // antes de ser encerrado.
@@ -154,12 +157,130 @@ Dir* voltarDiretorio(Dir *raiz, Dir *atual){
 
 }
 
-// Dir* criarDiretorio(){
-//     printf("Digite ")
-//     Dir *diretorio = (Dir*) malloc(sizeof(Dir));
-//     strcpy(diretorio->nome, c);
-//     diretorio->tam = 0;
-//     diretorio->pFilho = NULL;
-//     diretorio->prox = NULL;
-//     return diretorio;
-// }
+void inserirNo(Dir *pai, Dir *novoNo){
+    if (pai->pFilho == NULL){
+        // primeiro filho
+        pai->pFilho = novoNo;
+    } else {
+        Dir* aux = pai->pFilho;
+        while (aux->prox != NULL){
+            aux = aux->prox;
+        }
+        aux->prox = novoNo;
+    }
+}
+
+void criarDiretorio(Dir *d, char *nome){
+    Dir* novoDir = (Dir*) malloc(sizeof(Dir));
+    strcpy(novoDir->nome, nome);
+    novoDir->tam = 0;
+    novoDir->pFilho = NULL;
+    novoDir->prox = NULL;
+
+    inserirNo(d, novoDir);
+    printf("Diretorio '%s' criado.\n", nome);
+}
+
+void criarArquivo(Dir *d, char *nome, int tamanho){
+    Dir *novoArq = (Dir*) malloc(sizeof(Dir));
+    strcpy(novoArq->nome, nome);
+    novoArq->tam = tamanho;
+    novoArq->pFilho = NULL;
+    novoArq->prox = NULL;
+
+    inserirNo(d, novoArq);
+    printf("Arquivo '%s' (%d bytes) criado.\n", nome, tamanho);
+}
+
+Dir* removerNo(Dir *pai, char *nome) {
+    Dir *aux = pai->pFilho;
+    Dir *ant = NULL;
+
+    // procura o nó
+    while (aux != NULL && strcmp(aux->nome, nome) != 0) {
+        ant = aux;
+        aux = aux->prox;
+    }
+
+    if (aux == NULL) {
+        // nao encontrou
+        return NULL;
+    }
+
+    // Encontrou (é o 'aux'). Remove da lista
+    if (ant == NULL) {
+        // era o primeiro filho
+        pai->pFilho = aux->prox;
+    } else {
+        // nó do meio ou fim
+        ant->prox = aux->prox;
+    }
+    
+    // isola o no removido para evitar problemas
+    aux->prox = NULL;
+    return aux;
+}
+
+void excluirArquivo(Dir *d, char *nome){
+    Dir *noRemovido = removerNo(d, nome);
+
+    if (noRemovido == NULL) {
+        printf("Arquivo '%s' nao encontrado.\n", nome);
+        return;
+    }
+
+    if (noRemovido->tam == 0) {
+        printf("'%s' eh um diretorio, nao um arquivo. Nao foi excluido.\n", nome);
+        // se for dir, colocar de volta na lista
+        inserirNo(d, noRemovido);
+        return;
+    }
+
+    printf("Arquivo '%s' excluido.\n", nome);
+    free(noRemovido); // libera a memória
+}
+
+void liberarDiretorio(Dir *d) {
+    if (d == NULL) {
+        return;
+    }
+    // libera recursivamente filhos e irmãos
+    liberarDiretorio(d->pFilho);
+    liberarDiretorio(d->prox);
+    
+    // libera o nó atual (pós-ordem)
+    free(d);
+}
+
+void excluirDiretorio(Dir *d, char *nome){
+    Dir *noRemovido = removerNo(d, nome);
+
+    if (noRemovido == NULL) {
+        printf("Diretorio '%s' nao encontrado.\n", nome);
+        return;
+    }
+
+    if (noRemovido->tam > 0) {
+        printf("'%s' eh um arquivo, nao um diretorio. Nao foi excluido.\n", nome);
+        inserirNo(d, noRemovido);
+        return;
+    }
+
+    printf("Diretorio '%s' e todo o seu conteudo foram excluidos.\n", nome);
+    liberarDiretorio(noRemovido);
+}
+
+int tamanhoRecursivo(Dir *d) {
+    if (d == NULL) {
+        return 0;
+    }
+    int tamFilhos = tamanhoRecursivo(d->pFilho);
+    int tamIrmaos = tamanhoRecursivo(d->prox);
+    
+    return d->tam + tamFilhos + tamIrmaos;
+}
+
+void tamanhoDiretorio(Dir *d) {
+    int total = tamanhoRecursivo(d->pFilho);
+    printf("Tamanho total do conteudo de '%s': %d bytes\n", d->nome, total);
+}
