@@ -53,11 +53,7 @@ int main(){
             excluirDiretorio(diretorioAtual, nomeDigitado);
             break;
         case 7:
-            printf("Digite o nome do novo arquivo: ");
-            scanf("%99s", nomeDigitado);
-            printf("Digite o tamanho do arquivo: ");
-            scanf("%d", &tamDigitado);
-            criarArquivo(diretorioAtual, nomeDigitado, tamDigitado);
+            tamanhoDiretorio(diretorioAtual);
             break;
         case 8:
             printf("Digite o nome do novo arquivo: ");

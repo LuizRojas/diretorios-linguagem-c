@@ -32,6 +32,8 @@ Dir* abrirDiretorio(Dir *d, char *nome);
 // diretório atual seja a Raiz, o programa deve permanecer na Raiz. 
 void voltarDiretorio();
 
+Dir* removerNo(Dir *pai, char *nomer);
+
 //  deve criar um subdiretório dentro do diretório atual a partir 
 // do valor lido do teclado.
 void criarDiretorio();
@@ -52,17 +54,19 @@ void tamanhoDiretorio();
 // tamanho do arquivo devem ser lidos do teclado.
 void criarArquivo();
 
+Dir* removerNo(Dir *pai, char *nome);
+
 // deve excluir o arquivo a partir do nome informado pelo 
 // teclado. Caso o arquivo a ser excluído não exista no diretório atual, o programa 
 // deve exibir uma mensagem informando o fato.
 void excluirArquivo();
 
-Dir* encontrarPai(Dir* noBusca, Dir* alvo);
-int tamanhoRecursivo(Dir *d);
-
 // deve liberar a memória da estrutura de diretório completa 
 // antes de ser encerrado.
 void liberarDiretorio();
+
+Dir* encontrarPai(Dir* noBusca, Dir* alvo);
+int tamanhoRecursivo(Dir *d);
 
 void nomeDiretorio(Dir *d){
     if (d != NULL) {
@@ -86,8 +90,12 @@ void listarDiretorio(Dir *d){
         return;
     }
 
-    for (aux = d->pFilho; aux != NULL; aux->prox){
-        printf("%s\n", aux->nome);
+    for (aux = d->pFilho; aux != NULL; aux = aux->prox){
+        if (aux->tam == 0){
+            printf("- %s/ (DIR)\n", aux->nome);
+        } else {
+            printf("- %s (%d bytes)\n", aux->nome, aux->tam);
+        }
     }
 }
 
@@ -151,7 +159,7 @@ Dir* voltarDiretorio(Dir *raiz, Dir *atual){
         printf("Retornando para: %s\n", pai->nome);
         return pai;
     } else {
-        printf("Foi comprar cigarro. Mantendo em %s\n", atual->nome);
+        printf("Mantendo em %s\n", atual->nome);
         return atual;
     }
 
